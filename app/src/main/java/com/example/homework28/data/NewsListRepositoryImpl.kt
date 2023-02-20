@@ -13,9 +13,9 @@ class NewsListRepositoryImpl @Inject constructor(
     private val service: NewsService
 ) : NewsListRepository {
 
-    override suspend fun getNewsList(q: String): List<NewsData> {
+    override suspend fun getNewsList(): List<NewsData> {
         return withContext(Dispatchers.IO) {
-            service.getNewsList(q).execute().body()?.articles?.map { mapper(it) }
+            service.getNewsList().execute().body()?.articles?.map { mapper(it) }
                 ?: throw Exception()
         }
     }

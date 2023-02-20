@@ -17,8 +17,6 @@ class NewsViewModel @Inject constructor(
     private val newsListRepository: NewsListRepositoryImpl
 ) : ViewModel() {
 
-    private val keyword = "nature"
-
     private val _newsLiveData = MutableLiveData<List<NewsData>>()
     val newsLiveData: LiveData<List<NewsData>> get() = _newsLiveData
 
@@ -38,7 +36,7 @@ class NewsViewModel @Inject constructor(
     fun getNewsList() {
         _loadingLiveData.value = true
         viewModelScope.launch(exceptionHandler) {
-            val list = newsListRepository.getNewsList(keyword)
+            val list = newsListRepository.getNewsList()
             _newsLiveData.value = list
             _loadingLiveData.value = false
         }

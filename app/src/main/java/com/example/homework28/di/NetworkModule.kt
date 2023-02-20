@@ -15,16 +15,20 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NetworkModule {
 
     @Provides
-    fun getRetrofit(): Retrofit {
-        val okHttpClient = OkHttpClient.Builder()
+    fun getOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .build()
+    }
+
+    @Provides
+    fun getRetrofit(okHttpClient: OkHttpClient): Retrofit {
 
         val retrofit = Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("https://newsapi.org/v2/")
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -34,5 +38,9 @@ class NetworkModule {
     @Provides
     fun getService(retrofit: Retrofit): NewsService {
         return retrofit.create(NewsService::class.java)
+    }
+
+    companion object {
+        const val baseUrl = "https://newsapi.org/v2/"
     }
 }
