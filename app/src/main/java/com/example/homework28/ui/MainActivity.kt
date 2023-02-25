@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,7 +51,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
-        dividerItemDecoration.setDrawable(resources.getDrawable(R.drawable.rv_divider))
+        ContextCompat.getDrawable(this, R.drawable.rv_divider)
+            ?.let { dividerItemDecoration.setDrawable(it) }
         recycler.addItemDecoration(dividerItemDecoration)
     }
 }
