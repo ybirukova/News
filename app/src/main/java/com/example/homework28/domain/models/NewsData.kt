@@ -5,5 +5,6 @@ data class NewsData(
     val author: String,
     val date: String,
     val url: String,
-    val urlToImage: String
+    val urlToImage: String,
+    val content: String
 )

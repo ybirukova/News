@@ -4,7 +4,7 @@ import com.example.homework28.data.models.NewsResponse
 import com.example.homework28.domain.models.NewsData
 import javax.inject.Inject
 
-class NewsMapper @Inject constructor() {
+class ResponseToDataNewsMapper @Inject constructor() {
 
     operator fun invoke(response: NewsResponse) = with(response) {
         NewsData(
@@ -12,7 +12,8 @@ class NewsMapper @Inject constructor() {
             author = author.orEmpty(),
             date = (date?.substring(0, 10)).orEmpty(),
             url = url.orEmpty(),
-            urlToImage = urlToImage.orEmpty()
+            urlToImage = urlToImage.orEmpty(),
+            content = content.orEmpty()
         )
     }
 }

@@ -8,7 +8,7 @@ import com.example.homework28.domain.models.NewsData
 
 class NewsAdapter(
     private val newsList: List<NewsData>,
-    private val itemClick: (String) -> Unit
+    private val itemClick: (NewsData) -> Unit
 ) : RecyclerView.Adapter<NewsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {

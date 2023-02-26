@@ -1,9 +1,12 @@
 package com.example.homework28.di
 
+import android.content.Context
 import com.example.homework28.data.network.NewsService
+import com.example.homework28.ui.utils.NetworkConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,6 +41,11 @@ class NetworkModule {
     @Provides
     fun getService(retrofit: Retrofit): NewsService {
         return retrofit.create(NewsService::class.java)
+    }
+
+    @Provides
+    fun getNetworkConnection(@ApplicationContext context: Context): NetworkConnection{
+        return NetworkConnection(context)
     }
 
     companion object {

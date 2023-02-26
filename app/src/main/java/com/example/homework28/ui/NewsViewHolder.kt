@@ -10,7 +10,7 @@ import com.example.homework28.domain.models.NewsData
 
 class NewsViewHolder(
     itemView: View,
-    private val itemClick: (String) -> Unit
+    private val itemClick: (NewsData) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(news: NewsData) {
@@ -30,7 +30,7 @@ class NewsViewHolder(
                 .into(image)
 
         itemView.setOnClickListener {
-            itemClick.invoke(news.url)
+            itemClick.invoke(news)
         }
     }
 }
