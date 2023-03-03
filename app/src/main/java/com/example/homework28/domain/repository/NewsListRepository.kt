@@ -4,5 +4,5 @@ import com.example.homework28.domain.models.NewsData
 
 interface NewsListRepository {
 
-    suspend fun getNewsList(): List<NewsData>
+    suspend fun getNewsList(isNetworkConnection: Boolean): List<NewsData>
 }

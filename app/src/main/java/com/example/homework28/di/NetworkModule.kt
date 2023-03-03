@@ -44,7 +44,7 @@ class NetworkModule {
     }
 
     @Provides
-    fun getNetworkConnection(@ApplicationContext context: Context): NetworkConnection{
+    fun getNetworkConnection(@ApplicationContext context: Context): NetworkConnection {
         return NetworkConnection(context)
     }
 

@@ -15,19 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework28.R
 import com.example.homework28.domain.models.NewsData
-import com.example.homework28.ui.utils.NetworkConnection
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<NewsViewModel>()
-    @Inject
-    lateinit var networkConnection: NetworkConnection
 
     var itemClick: (NewsData) -> Unit = { news ->
-        if (networkConnection.isNetworkAvailable()) {
+        if (viewModel.getNetworkConnectionState()) {
             val address = Uri.parse(news.url)
             val openLinkIntent = Intent(Intent.ACTION_VIEW, address)
             startActivity(openLinkIntent)
