@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.example.homework28.ui.CustomProgressBarView
+        android:id="@+id/custom_progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:color_of_circle="@color/teal_700"
+        app:color_of_dot="@color/teal_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

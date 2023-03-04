@@ -1,6 +1,5 @@
 package com.example.homework28.ui
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import com.example.homework28.domain.models.NewsData
 import com.example.homework28.ui.utils.NetworkConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,6 +40,7 @@ class NewsViewModel @Inject constructor(
     fun getNewsList() {
         _loadingLiveData.value = true
         viewModelScope.launch(exceptionHandler) {
+            delay(2000)
             val list = newsListRepository.getNewsList(networkConnection.isNetworkAvailable())
             _newsLiveData.value = list
             _loadingLiveData.value = false

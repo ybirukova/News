@@ -3,7 +3,7 @@ package com.example.homework28.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ProgressBar
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework28.R
+import com.example.homework28.databinding.ActivityMainBinding
 import com.example.homework28.domain.models.NewsData
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private val viewModel by viewModels<NewsViewModel>()
 
     var itemClick: (NewsData) -> Unit = { news ->
@@ -27,19 +29,27 @@ class MainActivity : AppCompatActivity() {
             val address = Uri.parse(news.url)
             val openLinkIntent = Intent(Intent.ACTION_VIEW, address)
             startActivity(openLinkIntent)
-        } else openFragment(InfoFragment.newInstance(news.content))
+        } else openFragment(InfoFragment())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.getNewsList()
 
-        val recycler = findViewById<RecyclerView>(R.id.rv_news)
-        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+        val recycler = binding.rvNews
+        val progressBar = binding.customProgressBar
+        val set = AnimationUtils.loadAnimation(this, R.anim.rotate)
+        set.fillAfter = true
 
         viewModel.loadingLiveData.observe(this) { show ->
+            if (show) {
+                progressBar.startAnimation(set)
+            } else {
+                progressBar.clearAnimation()
+            }
             progressBar.isVisible = show
             recycler.isVisible = show.not()
         }
