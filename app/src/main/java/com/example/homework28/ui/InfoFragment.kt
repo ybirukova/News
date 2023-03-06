@@ -19,14 +19,14 @@ class InfoFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentInfoBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.buttonTryAgain.setOnClickListener {
+        binding.buttonReturn.setOnClickListener {
             val intent = Intent(activity, MainActivity::class.java)
             startActivity(intent)
         }
