@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomProgressBarView">
+        <attr name="color_of_dot" format="color" />
+        <attr name="color_of_circle" format="color">
+        </attr>
+    </declare-styleable>
+</resources>
