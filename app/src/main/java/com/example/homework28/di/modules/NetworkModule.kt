@@ -1,23 +1,21 @@
-package com.example.homework28.di
+package com.example.homework28.di.modules
 
 import android.content.Context
 import com.example.homework28.data.network.NewsService
 import com.example.homework28.ui.utils.NetworkConnection
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
 class NetworkModule {
 
     @Provides
+    @Singleton
     fun getOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -27,6 +25,7 @@ class NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun getRetrofit(okHttpClient: OkHttpClient): Retrofit {
 
         val retrofit = Retrofit.Builder()
@@ -39,12 +38,14 @@ class NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun getService(retrofit: Retrofit): NewsService {
         return retrofit.create(NewsService::class.java)
     }
 
     @Provides
-    fun getNetworkConnection(@ApplicationContext context: Context): NetworkConnection {
+    @Singleton
+    fun getNetworkConnection(context: Context): NetworkConnection {
         return NetworkConnection(context)
     }
 

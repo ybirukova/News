@@ -13,26 +13,36 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.homework28.NewsApp
 import com.example.homework28.R
 import com.example.homework28.databinding.ActivityMainBinding
+import com.example.homework28.di.ViewModelFactory
 import com.example.homework28.domain.models.NewsData
-import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var factory: ViewModelFactory
+    private val viewModel: NewsViewModel by viewModels { factory }
     private lateinit var binding: ActivityMainBinding
-    private val viewModel by viewModels<NewsViewModel>()
+
 
     var itemClick: (NewsData) -> Unit = { news ->
-        if (viewModel.getNetworkConnectionState()) {
-            val address = Uri.parse(news.url)
-            val openLinkIntent = Intent(Intent.ACTION_VIEW, address)
-            startActivity(openLinkIntent)
-        } else openFragment(InfoFragment())
+        viewModel.onClick(news.url)
+        viewModel.openNewsLiveData.observe(this){
+            if (it != "") {
+                val address = Uri.parse(it)
+                val openLinkIntent = Intent(Intent.ACTION_VIEW, address)
+                startActivity(openLinkIntent)
+            }else Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+//            else openFragment(InfoFragment())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as NewsApp).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

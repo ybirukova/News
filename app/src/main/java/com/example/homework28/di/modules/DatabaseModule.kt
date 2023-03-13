@@ -1,4 +1,4 @@
-package com.example.homework28.di
+package com.example.homework28.di.modules
 
 import android.content.Context
 import androidx.room.Room
@@ -6,20 +6,19 @@ import com.example.homework28.data.database.AppDataBase
 import com.example.homework28.data.database.NewsDao
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
 class DatabaseModule {
 
     @Provides
-    fun providesDatabase(@ApplicationContext context: Context): AppDataBase {
+    @Singleton
+    fun providesDatabase(context: Context): AppDataBase {
         return Room.databaseBuilder(context, AppDataBase::class.java, "news_database")
             .build()
     }
 
     @Provides
+    @Singleton
     fun getNewsDao(db: AppDataBase): NewsDao = db.getNewsDao()
 }

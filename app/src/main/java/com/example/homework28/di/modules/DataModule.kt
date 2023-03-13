@@ -1,16 +1,15 @@
-package com.example.homework28.di
+package com.example.homework28.di.modules
 
 import com.example.homework28.data.NewsListRepositoryImpl
 import com.example.homework28.domain.repository.NewsListRepository
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
 abstract class DataModule {
 
     @Binds
+    @Singleton
     abstract fun getNewsListRepository(impl: NewsListRepositoryImpl): NewsListRepository
 }
