@@ -10,6 +10,6 @@ import dagger.multibindings.IntoMap
 interface ViewModelModule {
     @Binds
     @IntoMap
-    @ViewModelKey(NewsViewModel::class)
-    fun bindLoginViewModel(viewModel: NewsViewModel): ViewModel
+    @com.example.core.ViewModelKey(NewsViewModel::class)
+    fun bindMainViewModel(viewModel: NewsViewModel): ViewModel
 }

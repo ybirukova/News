@@ -1,8 +1,8 @@
 package com.example.homework28.di.modules
 
 import android.content.Context
-import com.example.homework28.data.network.NewsService
-import com.example.homework28.ui.utils.NetworkConnection
+import com.example.data.network.NewsService
+import com.example.ui_kit.NetworkConnection
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

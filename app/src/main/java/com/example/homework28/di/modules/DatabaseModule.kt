@@ -2,8 +2,8 @@ package com.example.homework28.di.modules
 
 import android.content.Context
 import androidx.room.Room
-import com.example.homework28.data.database.AppDataBase
-import com.example.homework28.data.database.NewsDao
+import com.example.data.database.AppDataBase
+import com.example.data.database.NewsDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -9,15 +9,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.ViewModelFactory
+import com.example.domain.models.NewsData
+import com.example.feature.SecondActivity
 import com.example.homework28.NewsApp
-import com.example.homework28.R
 import com.example.homework28.databinding.ActivityMainBinding
-import com.example.homework28.di.ViewModelFactory
-import com.example.homework28.domain.models.NewsData
+import com.example.ui_kit.NewsAdapter
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -27,16 +27,14 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: NewsViewModel by viewModels { factory }
     private lateinit var binding: ActivityMainBinding
 
-
     var itemClick: (NewsData) -> Unit = { news ->
         viewModel.onClick(news.url)
-        viewModel.openNewsLiveData.observe(this){
+        viewModel.openNewsLiveData.observe(this) {
             if (it != "") {
                 val address = Uri.parse(it)
                 val openLinkIntent = Intent(Intent.ACTION_VIEW, address)
                 startActivity(openLinkIntent)
-            }else Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
-//            else openFragment(InfoFragment())
+            } else Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -51,8 +49,13 @@ class MainActivity : AppCompatActivity() {
 
         val recycler = binding.rvNews
         val progressBar = binding.customProgressBar
-        val set = AnimationUtils.loadAnimation(this, R.anim.rotate)
+        val set = AnimationUtils.loadAnimation(this, com.example.homework28.R.anim.rotate)
         set.fillAfter = true
+
+        binding.buttonSearch.setOnClickListener {
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivity(intent)
+        }
 
         viewModel.loadingLiveData.observe(this) { show ->
             if (show) {
@@ -76,17 +79,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
-        ContextCompat.getDrawable(this, R.drawable.rv_divider)
+        ContextCompat.getDrawable(this, com.example.ui_kit.R.drawable.rv_divider)
             ?.let()
             { dividerItemDecoration.setDrawable(it) }
         recycler.addItemDecoration(dividerItemDecoration)
-    }
-
-    private fun openFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
     }
 }

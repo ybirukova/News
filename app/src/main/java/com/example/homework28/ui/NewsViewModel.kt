@@ -1,23 +1,20 @@
 package com.example.homework28.ui
 
-import android.content.Intent
-import android.net.Uri
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.homework28.data.NewsListRepositoryImpl
-import com.example.homework28.domain.models.NewsData
-import com.example.homework28.ui.utils.NetworkConnection
+import com.example.domain.models.NewsData
+import com.example.domain.repository.NewsListRepository
+import com.example.ui_kit.NetworkConnection
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NewsViewModel @Inject constructor(
-    private val newsListRepository: NewsListRepositoryImpl,
-    private val networkConnection: NetworkConnection,
+    private val newsListRepository: NewsListRepository,
+    private val networkConnection: NetworkConnection
 ) : ViewModel() {
 
     private val _newsLiveData = MutableLiveData<List<NewsData>>()
@@ -31,7 +28,6 @@ class NewsViewModel @Inject constructor(
 
     private val _openNewsLiveData = MutableLiveData<String>()
     val openNewsLiveData: LiveData<String> get() = _openNewsLiveData
-
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _loadingLiveData.value = false
@@ -50,10 +46,6 @@ class NewsViewModel @Inject constructor(
             _newsLiveData.value = list
             _loadingLiveData.value = false
         }
-    }
-
-    fun getNetworkConnectionState(): Boolean {
-        return networkConnection.isNetworkAvailable()
     }
 
     fun onClick(url: String) {
