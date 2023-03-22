@@ -1,6 +1,8 @@
 package com.example.homework28
 
 import android.app.Application
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.example.core.HasDependencies
 import com.example.core.MyWorkerFactory
 import com.example.homework28.di.ApplicationComponent
@@ -22,9 +24,9 @@ class NewsApp : HasDependencies, Application() {
     override fun onCreate() {
         appComponent.inject(this)
         super.onCreate()
-//        WorkManager.initialize(
-//            this,
-//            Configuration.Builder().setWorkerFactory(workerFactory).build()
-//        )
+        WorkManager.initialize(
+            this,
+            Configuration.Builder().setWorkerFactory(workerFactory).build()
+        )
     }
 }
