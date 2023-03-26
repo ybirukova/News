@@ -11,13 +11,9 @@ class EntityToDataNewsMapper @Inject constructor() {
             title = title,
             author = author,
             date = (date.substring(0, 10)),
-            url = EMPTY_STRING,
-            urlToImage = EMPTY_STRING,
+            url = url,
+            urlToImage = urlToImage,
             content = content
         )
-    }
-
-    companion object {
-        private const val EMPTY_STRING = ""
     }
 }

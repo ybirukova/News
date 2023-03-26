@@ -3,6 +3,7 @@ package com.example.homework28.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -45,8 +46,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.getNewsList()
-
         val recycler = binding.rvNews
         val progressBar = binding.customProgressBar
         val set = AnimationUtils.loadAnimation(this, com.example.homework28.R.anim.rotate)
@@ -76,6 +75,7 @@ class MainActivity : AppCompatActivity() {
             recycler.adapter = adapter
             recycler.layoutManager =
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            Log.d("PRINT2", it.toString())
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
