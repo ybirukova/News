@@ -57,8 +57,10 @@ class SecondActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val input = s.toString()
-                viewModel.setQuery(input)
+                if(s == ""){
+                    val input = s.toString()
+                    viewModel.setQuery(input)
+                }
             }
         })
 
