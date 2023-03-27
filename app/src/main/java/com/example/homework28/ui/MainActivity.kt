@@ -1,5 +1,6 @@
 package com.example.homework28.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,21 +10,26 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.*
 import com.example.core.ViewModelFactory
 import com.example.domain.models.NewsData
 import com.example.feature.SecondActivity
+import com.example.homework28.MyWorker
 import com.example.homework28.NewsApp
 import com.example.homework28.databinding.ActivityMainBinding
 import com.example.ui_kit.NewsAdapter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var factory: ViewModelFactory
+
     private val viewModel: NewsViewModel by viewModels { factory }
     private lateinit var binding: ActivityMainBinding
 
@@ -45,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initWorker(this, this)
         viewModel.getNewsList()
 
         val recycler = binding.rvNews
@@ -74,14 +81,27 @@ class MainActivity : AppCompatActivity() {
         viewModel.newsLiveData.observe(this) {
             val adapter = NewsAdapter(it, itemClick)
             recycler.adapter = adapter
-            recycler.layoutManager =
-                LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
         ContextCompat.getDrawable(this, com.example.ui_kit.R.drawable.rv_divider)
-            ?.let()
-            { dividerItemDecoration.setDrawable(it) }
+            ?.let { dividerItemDecoration.setDrawable(it) }
         recycler.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun initWorker(context: Context, viewLifecycleOwner: LifecycleOwner) {
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresStorageNotLow(true).build()
+
+        val uploadWork = PeriodicWorkRequest.Builder(MyWorker::class.java, 8, TimeUnit.HOURS)
+            .setConstraints(constraints).build()
+
+        val workManager = WorkManager.getInstance(context).enqueue(uploadWork)
+        workManager.state.observe(viewLifecycleOwner) { state ->
+            if (state == Operation.SUCCESS) {
+                viewModel.getNewsList()
+            }
+        }
     }
 }

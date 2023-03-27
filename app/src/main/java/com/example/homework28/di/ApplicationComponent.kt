@@ -2,6 +2,7 @@ package com.example.homework28.di
 
 import android.content.Context
 import com.example.feature.di.FeatureDependencies
+import com.example.homework28.NewsApp
 import com.example.homework28.di.modules.DatabaseModule
 import com.example.homework28.di.modules.NetworkModule
 import com.example.homework28.di.modules.RepModule
@@ -11,7 +12,7 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-@Component(modules = [DatabaseModule::class, RepModule::class, NetworkModule::class, ViewModelModule::class])
+@Component(modules = [DatabaseModule::class, RepModule::class, NetworkModule::class, ViewModelModule::class, WorkerBindingModule::class])
 @Singleton
 interface ApplicationComponent : FeatureDependencies {
 
@@ -23,4 +24,6 @@ interface ApplicationComponent : FeatureDependencies {
     fun inject(activity: MainActivity)
 
     fun inject(fragment: InfoFragment)
+
+    fun inject(application: NewsApp)
 }
