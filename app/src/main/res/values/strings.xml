@@ -3,4 +3,5 @@
     <string name="error">error</string>
     <string name="error_text">No internet connection or list of the news is empty.</string>
     <string name="button_text">Return</string>
+    <string name="search">Search</string>
 </resources>
