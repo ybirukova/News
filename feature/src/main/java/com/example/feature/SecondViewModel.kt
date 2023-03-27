@@ -1,13 +1,12 @@
 package com.example.feature
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.NewsData
 import com.example.domain.repository.NewsListRepository
 import com.example.ui_kit.NetworkConnection
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class SecondViewModel @Inject constructor(
@@ -15,22 +14,28 @@ class SecondViewModel @Inject constructor(
     private val networkConnection: NetworkConnection
 ) : ViewModel() {
 
-    private val _newsLiveDataBySearching = MutableLiveData<List<NewsData>?>()
-    val newsLiveDataBySearching: MutableLiveData<List<NewsData>?> get() = _newsLiveDataBySearching
+    private val trigger = MutableStateFlow("")
 
-    private val _searchLiveData = MutableLiveData<String>()
-    val searchLiveData: MutableLiveData<String> get() = _searchLiveData
-
-    fun getNewsListBySearching(q: String) {
-        viewModelScope.launch {
-            delay(3000)
-            val list =
-                newsListRepository.getNewsListBySearching(networkConnection.isNetworkAvailable(), q)
-            _newsLiveDataBySearching.value = list
-        }
+    fun setQuery(query: String) {
+        trigger.value = query
     }
 
-    fun setSearchWord(str: String) {
-        _searchLiveData.value = str
+    suspend fun getResult(): Flow<List<NewsData>> {
+        while (true) {
+            delay(2000)
+            if (trigger.value.isNotBlank()) {
+                return trigger.flatMapLatest { query ->
+                    newsListRepository.getNewsListBySearching(
+                        networkConnection.isNetworkAvailable(),
+                        query
+                    )
+                        .stateIn(
+                            scope = viewModelScope,
+                            started = SharingStarted.WhileSubscribed(5000L),
+                            initialValue = emptyList()
+                        )
+                }
+            } else delay(1000L)
+        }
     }
 }

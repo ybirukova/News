@@ -1,5 +1,6 @@
 package com.example.homework28.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,13 +39,25 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun getNewsList() {
+    init {
+        refreshData()
+        observeNews()
+    }
+
+    private fun refreshData() {
+        viewModelScope.launch(exceptionHandler) {
+            newsListRepository.getNewsListFromApiToDatabase()
+        }
+    }
+
+    private fun observeNews() {
         _loadingLiveData.value = true
         viewModelScope.launch(exceptionHandler) {
-            delay(2000)
-            val list = newsListRepository.getNewsList(networkConnection.isNetworkAvailable())
-            _newsLiveData.value = list
-            _loadingLiveData.value = false
+            delay(4000)
+            newsListRepository.getNewsList(networkConnection.isNetworkAvailable()).collect {
+                _newsLiveData.value = it
+                _loadingLiveData.value = false
+            }
         }
     }
 
@@ -54,6 +67,5 @@ class NewsViewModel @Inject constructor(
                 _openNewsLiveData.value = url
             } else _openNewsLiveData.value = ""
         }
-
     }
 }

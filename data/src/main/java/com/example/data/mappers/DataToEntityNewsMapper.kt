@@ -11,6 +11,8 @@ class DataToEntityNewsMapper @Inject constructor() {
             title = title,
             author = author,
             date = (date.substring(0, 10)),
+            url = url,
+            urlToImage = urlToImage,
             content = content
         )
     }

@@ -10,5 +10,7 @@ data class NewsEntity(
     @ColumnInfo("title") val title: String,
     @ColumnInfo("author") val author: String,
     @ColumnInfo("publishedAt") val date: String,
+    @ColumnInfo("url") val url: String,
+    @ColumnInfo("urlToImage") val urlToImage: String,
     @ColumnInfo("content") val content: String
 )

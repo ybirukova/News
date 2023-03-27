@@ -5,11 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +20,8 @@ import com.example.core.findDependencies
 import com.example.domain.models.NewsData
 import com.example.feature.databinding.ActivitySecondBinding
 import com.example.feature.di.DaggerFeatureComponent
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SecondActivity : AppCompatActivity() {
@@ -47,36 +51,40 @@ class SecondActivity : AppCompatActivity() {
         editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val input = s.toString()
-                Log.d("PRINT", input)
-                viewModel.setSearchWord(input)
+                viewModel.setQuery(input)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val input = s.toString()
-                Log.d("PRINT", input)
-                viewModel.setSearchWord(input)
+                if(s == ""){
+                    val input = s.toString()
+                    viewModel.setQuery(input)
+                }
             }
         })
 
-        viewModel.searchLiveData.observe(this) {
-            Log.d("PRINT", it)
-            viewModel.getNewsListBySearching(it)
-        }
-
-        viewModel.newsLiveDataBySearching.observe(this) {
-            if (it != null) {
-                recycler.isVisible = true
-                nothingIsFoundText.isVisible = false
-                val adapter = com.example.ui_kit.NewsAdapter(it, itemClick)
-                recycler.adapter = adapter
-                recycler.layoutManager =
-                    LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            } else {
-                recycler.isVisible = false
-                nothingIsFoundText.isVisible = true
-            }
+        lifecycleScope.launch {
+            viewModel.getResult()
+                .flowWithLifecycle(this@SecondActivity.lifecycle, Lifecycle.State.STARTED)
+                .distinctUntilChanged()
+                .collect {
+                    if (it != null) {
+                        recycler.isVisible = true
+                        nothingIsFoundText.isVisible = false
+                        val adapter = com.example.ui_kit.NewsAdapter(it, itemClick)
+                        recycler.adapter = adapter
+                        recycler.layoutManager =
+                            LinearLayoutManager(
+                                this@SecondActivity,
+                                LinearLayoutManager.VERTICAL,
+                                false
+                            )
+                    } else {
+                        recycler.isVisible = false
+                        nothingIsFoundText.isVisible = true
+                    }
+                }
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
