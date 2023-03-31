@@ -1,16 +1,15 @@
 package com.example.data
 
+import android.util.Log
 import com.example.data.mappers.DataToEntityNewsMapper
 import com.example.data.mappers.EntityToDataNewsMapper
 import com.example.data.mappers.ResponseToDataNewsMapper
 import com.example.data.network.NewsService
 import com.example.domain.models.NewsData
 import com.example.domain.repository.NewsListRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class NewsListRepositoryImpl @Inject constructor(
@@ -21,36 +20,32 @@ class NewsListRepositoryImpl @Inject constructor(
     private val database: DatabaseSource,
 ) : NewsListRepository {
 
-    override suspend fun getNewsListFromApiToDatabase(): List<NewsData> {
-        return withContext(Dispatchers.IO) {
-            val list = service.getNewsList().execute()
-                .body()?.articles?.map { responseToDataMapper(it) }
-                ?: throw Exception()
+    override fun getNewsListFromApiToDatabase(): Completable {
+
+        return service.getNewsList().flatMapCompletable {
+            val list = it.articles?.map { responseToDataMapper(it) } ?: throw Exception()
             val listOfEntities = list.map { dataToEntityNewsMapper(it) }
             database.insertAllNews(*listOfEntities.toTypedArray())
-            list
+            Completable.complete()
         }
     }
 
-    override suspend fun getNewsList(isNetworkConnection: Boolean): Flow<List<NewsData>> {
-        return withContext(Dispatchers.IO) {
-            database.getAllNews().map { list ->
-                list.map {
-                    entityToDataMapper(it)
-                }
-            }
+    override fun getNewsList(isNetworkConnection: Boolean): Observable<List<NewsData>> {
+        val list = database.getAllNews().map { list ->
+            Log.d("PRINT1", list.toString())
+            list.map { entityToDataMapper(it) }
         }
+        return list
     }
 
-    override suspend fun getNewsListBySearching(
+    override fun getNewsListBySearching(
         isNetworkConnection: Boolean,
         q: String
-    ): Flow<List<NewsData>> {
-        return withContext(Dispatchers.IO) {
-            val list = service.getNewsListBySearching(q).execute()
-                .body()?.articles?.map { responseToDataMapper(it) }
-                ?: throw Exception()
-            flow { emit(list) }
+    ): Single<List<NewsData>> {
+
+        return service.getNewsListBySearching(q).map {
+            val list = it.articles?.map { responseToDataMapper(it) } ?: throw Exception()
+            list
         }
     }
 }

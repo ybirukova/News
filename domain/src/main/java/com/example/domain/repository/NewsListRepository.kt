@@ -1,16 +1,18 @@
 package com.example.domain.repository
 
 import com.example.domain.models.NewsData
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 
 interface NewsListRepository {
 
-    suspend fun getNewsListFromApiToDatabase(): List<NewsData>
+    fun getNewsListFromApiToDatabase(): Completable
 
-    suspend fun getNewsList(isNetworkConnection: Boolean): Flow<List<NewsData>>
+    fun getNewsList(isNetworkConnection: Boolean): Observable<List<NewsData>>
 
-    suspend fun getNewsListBySearching(
+    fun getNewsListBySearching(
         isNetworkConnection: Boolean,
         q: String
-    ): Flow<List<NewsData>>
+    ): Single<List<NewsData>>
 }

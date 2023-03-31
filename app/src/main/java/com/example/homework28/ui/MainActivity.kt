@@ -3,7 +3,6 @@ package com.example.homework28.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -75,7 +74,6 @@ class MainActivity : AppCompatActivity() {
             recycler.adapter = adapter
             recycler.layoutManager =
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            Log.d("PRINT2", it.toString())
         }
 
         val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
