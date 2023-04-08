@@ -10,7 +10,7 @@ class EntityToDataNewsMapper @Inject constructor() {
         NewsData(
             title = title,
             author = author,
-            date = (date.substring(0, 10)),
+            date = date,
             url = url,
             urlToImage = urlToImage,
             content = content
