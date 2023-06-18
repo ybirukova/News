@@ -1,6 +1,5 @@
 package com.example.homework28.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.models.NewsData
 import com.example.domain.repository.NewsListRepository
 import com.example.ui_kit.NetworkConnection
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.delay
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class NewsViewModel @Inject constructor(
@@ -30,14 +31,7 @@ class NewsViewModel @Inject constructor(
     private val _openNewsLiveData = MutableLiveData<String>()
     val openNewsLiveData: LiveData<String> get() = _openNewsLiveData
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _loadingLiveData.value = false
-        when (throwable) {
-            else -> {
-                _errorLiveData.value = "error"
-            }
-        }
-    }
+    private val composite = CompositeDisposable()
 
     init {
         refreshData()
@@ -45,20 +39,28 @@ class NewsViewModel @Inject constructor(
     }
 
     private fun refreshData() {
-        viewModelScope.launch(exceptionHandler) {
-            newsListRepository.getNewsListFromApiToDatabase()
-        }
+        val disposable = newsListRepository.getNewsListFromApiToDatabase()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+        composite.add(disposable)
     }
 
     private fun observeNews() {
         _loadingLiveData.value = true
-        viewModelScope.launch(exceptionHandler) {
-            delay(4000)
-            newsListRepository.getNewsList(networkConnection.isNetworkAvailable()).collect {
+
+        val disposable = newsListRepository.getNewsList(networkConnection.isNetworkAvailable())
+            .subscribeOn(Schedulers.io())
+            .delay(3, TimeUnit.SECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally {}
+            .subscribe({
                 _newsLiveData.value = it
                 _loadingLiveData.value = false
-            }
-        }
+            }, { throwable ->
+            })
+
+        composite.add(disposable)
     }
 
     fun onClick(url: String) {
@@ -67,5 +69,10 @@ class NewsViewModel @Inject constructor(
                 _openNewsLiveData.value = url
             } else _openNewsLiveData.value = ""
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        composite.clear()
     }
 }
